@@ -5,20 +5,20 @@ import 'package:flutter_barcode_listener_plus/flutter_barcode_listener_plus_meth
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelFlutterBarcodeListenerPlus platform = MethodChannelFlutterBarcodeListenerPlus();
+  MethodChannelFlutterBarcodeListenerPlus platform =
+      MethodChannelFlutterBarcodeListenerPlus();
   const MethodChannel channel = MethodChannel('flutter_barcode_listener_plus');
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      (MethodCall methodCall) async {
-        return '42';
-      },
-    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          return '42';
+        });
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {

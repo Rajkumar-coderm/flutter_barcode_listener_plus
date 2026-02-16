@@ -8,7 +8,8 @@ abstract class FlutterBarcodeListenerPlusPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static FlutterBarcodeListenerPlusPlatform _instance = MethodChannelFlutterBarcodeListenerPlus();
+  static FlutterBarcodeListenerPlusPlatform _instance =
+      MethodChannelFlutterBarcodeListenerPlus();
 
   /// The default instance of [FlutterBarcodeListenerPlusPlatform] to use.
   ///

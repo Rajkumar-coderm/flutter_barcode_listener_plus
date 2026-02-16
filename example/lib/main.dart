@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_barcode_listener_plus/flutter_barcode_listener_plus.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -16,48 +13,72 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _flutterBarcodeListenerPlusPlugin = FlutterBarcodeListenerPlus();
+  final BarcodeController _barcodeController = BarcodeController();
+
+  final List<String> _scannedValues = ["Nitesh", "Rajkumar", "1234567890"];
 
   @override
   void initState() {
-    super.initState();
-    initPlatformState();
-  }
+    _scannedValues.add("Nitesh");
+    _barcodeController.stream.listen((values) {
+      try {
+        if (values.isNotEmpty) {
+          _scannedValues.add(values);
+          setState(() {});
+        }
+      } catch (_) {}
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _flutterBarcodeListenerPlusPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Scanned value from stream: $values")));
+        }
+      });
     });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+    return BarcodeListener(
+      bufferDuration: Duration(seconds: 2),
+      controller: _barcodeController,
+      child: Scaffold(
+        appBar: AppBar(title: Text("Barcode Scanner")),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _scannedValues.clear();
+            setState(() {});
+          },
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Column(
+          children: [
+            TextFormField(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _scannedValues.length,
+                // shrinkWrap: true,
+                padding: EdgeInsets.all(16),
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                      "Scanned value: ${_scannedValues[index]}",
+                      style: TextStyle(fontSize: 20, color: Colors.black),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
+      onScan: (value) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Scanned value from onScan: $value")));
+        print("final scanned value is : $value");
+      },
     );
   }
 }
