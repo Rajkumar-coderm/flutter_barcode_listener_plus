@@ -1,5 +1,8 @@
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+
+import 'flutter_barcode_listener_plus_platform_interface.dart';
+
+class FlutterBarcodeListenerPlus {
+  Future<String?> getPlatformVersion() {
+    return FlutterBarcodeListenerPlusPlatform.instance.getPlatformVersion();
+  }
 }
